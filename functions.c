@@ -789,7 +789,7 @@ static void set_device_quality(struct template_state *tmpl, const char *name, co
 {
     if (argc) {
         if (send_server_message(argv[0])) {
-            printf("Error in setting camera properties");
+            printf("Error in setting camera properties\n");
         }
     }
 }
@@ -804,14 +804,14 @@ static void start_rtsp_server(struct template_state *tmpl, const char *name, con
     if (stream_server_pid == -1) {
         stream_server_pid = fork();
         if (stream_server_pid < 0) {
-            printf("Fork failed");
+            printf("Fork failed\n");
         } else if (stream_server_pid == 0) {
             if (execlp("stream_server", "stream_server", argv[0], NULL)==-1) {
-                printf("Error in launching the stream server");
+                printf("Error in launching the stream server\n");
             }
         }
     } else {
-        printf("Stream server running PID: %d", stream_server_pid);
+        printf("Stream server running with PID: %d\n", stream_server_pid);
     }
 }
 
@@ -820,9 +820,9 @@ static void stop_rtsp_server(struct template_state *tmpl, const char *name, cons
     if (stream_server_pid != -1) {
         if(!kill(stream_server_pid, SIGTERM)) {
             stream_server_pid = -1;
-            printf("Stream server successfully killed");
+            printf("Stream server successfully killed\n");
         } else {
-            printf("Could not kill the stream server");
+            printf("Could not kill the stream server\n");
         }
     }
 }

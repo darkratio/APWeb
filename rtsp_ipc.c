@@ -21,7 +21,7 @@ int send_server_message(char* msg)
     int fd;
 
     if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        printf("Unable to create stream server socket");
+        printf("Unable to create stream server socket\n");
         return -1;
     }
 
@@ -30,7 +30,7 @@ int send_server_message(char* msg)
     strcpy(addr.sun_path, SOCKET_PATH);
 
     if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-        printf("Unable to connect to the stream server");
+        printf("Unable to connect to the stream server\n");
         return -1;
     } else {
         write(fd, msg, strlen(msg));
@@ -45,7 +45,7 @@ void get_server_response(RTSP_MESSAGE_TYPE type, char* reply, char* args)
     int fd;
 
     if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        printf("Unable to create stream server socket");
+        printf("Unable to create stream server socket\n");
         reply[0] = '\0';
         return;
     }
@@ -56,14 +56,14 @@ void get_server_response(RTSP_MESSAGE_TYPE type, char* reply, char* args)
 
     if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
         reply[0] = '\0';
-            printf("Unable to connect to the stream server");
+            printf("Unable to connect to the stream server\n");
     } else {
         switch(type) {
         case GET_DEVICE_PROPS:
             write(fd, "GDP", 4);
             break;
         default:
-            printf("Malformed message from stream server");
+            printf("Malformed message from stream server\n");
         }
 
         char read_buffer[IPC_BUFFER_SIZE];
@@ -103,7 +103,7 @@ void process_server_response(char* reply, char* result)
         strcpy(result, p);
         break;
     default:
-        printf("Malformed message from stream server");
+        printf("Malformed message from stream server\n");
     }
 }
 
