@@ -10,7 +10,6 @@
 #include <stdlib.h>
 
 const char SOCKET_PATH[80] = "/tmp/rtsp_server.sock";
-// const char SOCKET_PATH[80] = "../rtsp_server";
 
 const char* RTSP_MESSAGE_HEADER[] = {
     "GDP", "SDP"
@@ -25,7 +24,6 @@ int send_server_message(char* msg)
         printf("Unable to create stream server socket");
         return -1;
     }
-    fprintf(stderr, "Socket fd - %d\n", fd);
 
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
