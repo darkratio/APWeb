@@ -1,6 +1,8 @@
 #ifndef RTSP_IPC_H
 #define RTSP_IPC_H
 
+static const unsigned int IPC_BUFFER_SIZE = 10000;
+
 typedef enum RTSP_MESSAGE_TYPE {GET_DEVICE_PROPS, 
                                 SET_DEVICE_PROPS,
                                 ERROR,

@@ -756,11 +756,13 @@ static void get_param(struct template_state *tmpl, const char *name, const char 
     }
 }
 
+/*
+  gets the list of avaialble cameras from the RTSP stream server over a local socket
+ */
 static void get_camera_details(struct template_state *tmpl, const char *name, const char *value, int argc, char **argv)
 {
-    fprintf(stderr, "getting cam details!\n");
-    char msg[1000];
-    char result[1000];
+    char msg[IPC_BUFFER_SIZE];
+    char result[IPC_BUFFER_SIZE];
     get_server_response(GET_DEVICE_PROPS, msg, NULL);
     if (strlen(msg)) {
         process_server_response(msg, result);
@@ -770,6 +772,9 @@ static void get_camera_details(struct template_state *tmpl, const char *name, co
     }
 }
 
+/*
+  find the list of available network interfaces for starting the RTSP stream server
+ */
 static void get_interfaces(struct template_state *tmpl, const char *name, const char *value, int argc, char **argv)
 {
     fprintf(stderr, "getting IFs!\n");
@@ -778,19 +783,16 @@ static void get_interfaces(struct template_state *tmpl, const char *name, const 
     sock_printf(tmpl->sock, "%s", interfaces_list);
 }
 
+/*
+  sets the properties of a camera through IPC with the RTSP stream server
+ */
 static void set_device_quality(struct template_state *tmpl, const char *name, const char *value, int argc, char **argv)
 {
-    // fprintf(stderr, "getting cam details!\n");
-    for (int i = 0; i < argc; i++) {
-        printf("%d %s\n", i, argv[i]);
-    }
     if (argc) {
-        if (send_server_message(argv[0]) == 0) {
-            printf("Message sent");
+        if (send_server_message(argv[0])) {
+            printf("Error in setting camera properties");
         }
     }
-    // char msg[1000];
-    // send_server_message(msg);
 }
 
 static pid_t stream_server_pid = -1;

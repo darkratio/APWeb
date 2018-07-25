@@ -66,7 +66,7 @@ void get_server_response(RTSP_MESSAGE_TYPE type, char* reply, char* args)
             printf("Malformed message from stream server");
         }
 
-        char read_buffer[1000];
+        char read_buffer[IPC_BUFFER_SIZE];
         read_buffer[0] = '\0';
         int bytes_read = recv(fd, read_buffer, sizeof(read_buffer), 0);
         read_buffer[bytes_read] = '\0';
