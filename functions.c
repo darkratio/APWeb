@@ -777,8 +777,7 @@ static void get_camera_details(struct template_state *tmpl, const char *name, co
  */
 static void get_interfaces(struct template_state *tmpl, const char *name, const char *value, int argc, char **argv)
 {
-    fprintf(stderr, "getting IFs!\n");
-    char interfaces_list[1000];
+    char interfaces_list[IPC_BUFFER_SIZE];
     get_interfaces_list(interfaces_list);
     sock_printf(tmpl->sock, "%s", interfaces_list);
 }
@@ -797,23 +796,22 @@ static void set_device_quality(struct template_state *tmpl, const char *name, co
 
 static pid_t stream_server_pid = -1;
 
+/*
+  forks to create a new process for the RTSP stream
+ */
 static void start_rtsp_server(struct template_state *tmpl, const char *name, const char *value, int argc, char **argv)
 {
-    // char cmd[100];
-    // cmd[0] = '\0';
-    // sprintf(cmd, "stream_server %s", argv[0]);
-    // fprintf(stderr, "%s\n", cmd);
     if (stream_server_pid == -1) {
         stream_server_pid = fork();
         if (stream_server_pid < 0) {
-            fprintf(stderr, "Forked failed");
+            printf("Fork failed");
         } else if (stream_server_pid == 0) {
             if (execlp("stream_server", "stream_server", argv[0], NULL)==-1) {
-                fprintf(stderr, "Error in launching the stream server");
+                printf("Error in launching the stream server");
             }
         }
     } else {
-        fprintf(stderr, "Stream server running %d", stream_server_pid);
+        printf("Stream server running PID: %d", stream_server_pid);
     }
 }
 
@@ -822,9 +820,9 @@ static void stop_rtsp_server(struct template_state *tmpl, const char *name, cons
     if (stream_server_pid != -1) {
         if(!kill(stream_server_pid, SIGTERM)) {
             stream_server_pid = -1;
-            fprintf(stderr, "Stream server successfully killed");
+            printf("Stream server successfully killed");
         } else {
-            fprintf(stderr, "Could not kill the stream server");
+            printf("Could not kill the stream server");
         }
     }
 }
@@ -834,8 +832,6 @@ static void stop_rtsp_server(struct template_state *tmpl, const char *name, cons
  */
 static void get_param_list(struct template_state *tmpl, const char *name, const char *value, int argc, char **argv)
 {
-    fprintf(stderr, "getting cam details!");
-
     bool first = true;
     uint16_t i;
     sock_printf(tmpl->sock, "[ ");
