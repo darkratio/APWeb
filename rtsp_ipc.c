@@ -22,7 +22,7 @@ int send_server_message(char* msg)
     int fd;
 
     if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket error");
+        printf("Unable to create stream server socket");
         return -1;
     }
     fprintf(stderr, "Socket fd - %d\n", fd);
@@ -32,7 +32,7 @@ int send_server_message(char* msg)
     strcpy(addr.sun_path, SOCKET_PATH);
 
     if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-        fprintf(stderr, "Connect error");
+        printf("Unable to connect to the stream server");
         return -1;
     } else {
         write(fd, msg, strlen(msg));
@@ -47,11 +47,10 @@ void get_server_response(RTSP_MESSAGE_TYPE type, char* reply, char* args)
     int fd;
 
     if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket error");
+        printf("Unable to create stream server socket");
         reply[0] = '\0';
         return;
     }
-    fprintf(stderr, "Socket fd - %d\n", fd);
 
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
@@ -59,20 +58,19 @@ void get_server_response(RTSP_MESSAGE_TYPE type, char* reply, char* args)
 
     if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
         reply[0] = '\0';
-        fprintf(stderr, "Connect error");
+            printf("Unable to connect to the stream server");
     } else {
         switch(type) {
         case GET_DEVICE_PROPS:
             write(fd, "GDP", 4);
             break;
         default:
-            fprintf(stderr, "Not implemented yet!");
+            printf("Malformed message from stream server");
         }
 
         char read_buffer[1000];
         read_buffer[0] = '\0';
         int bytes_read = recv(fd, read_buffer, sizeof(read_buffer), 0);
-        printf("\nRead buffer - %s with bytes - %d \n", read_buffer, bytes_read);
         read_buffer[bytes_read] = '\0';
         if (bytes_read != -1) {
             strcpy(reply, read_buffer);
@@ -104,18 +102,17 @@ void process_server_response(char* reply, char* result)
     switch (message_type) {
     case GET_DEVICE_PROPS:
         ;
-        printf("Got JSON - %s", p);
         strcpy(result, p);
         break;
     default:
-        fprintf(stderr, "Not implemented yet!");
+        printf("Malformed message from stream server");
     }
 }
 
+// Gets list of available network interfaces for starting the RTSP stream server
 void get_interfaces_list(char* interface_list)
 {
     struct ifaddrs *ifaddr, *ifa;
-    // int s;
     char host[NI_MAXHOST];
 
     if (getifaddrs(&ifaddr) == -1) {
@@ -130,9 +127,8 @@ void get_interfaces_list(char* interface_list)
             continue;
         }
         getnameinfo(ifa->ifa_addr,sizeof(struct sockaddr_in), host, NI_MAXHOST,
-                      NULL, 0, NI_NUMERICHOST);
+                    NULL, 0, NI_NUMERICHOST);
         if (ifa->ifa_addr->sa_family==AF_INET) {
-            fprintf(stderr, "%s\n", ifa->ifa_name);
             if (i == 0) {
                 sprintf(interface_list, "%s\"%s\"", interface_list, ifa->ifa_name);    
             } else {
@@ -140,19 +136,7 @@ void get_interfaces_list(char* interface_list)
             }
             i++;
         }
-        // if ((strcmp(ifa->ifa_name, interface.c_str()) == 0) && (ifa->ifa_addr->sa_family==AF_INET)) {
-        //     if (s != 0) {
-        //         printf("getnameinfo() failed: %s\n", gai_strerror(s));
-        //     }
-        //     printf("Interface : <%s>\n",ifa->ifa_name);
-        //     printf("Address : <%s>\n", host);
-        //     freeifaddrs(ifaddr);
-        //     return string(host);
-        // }
     }
     sprintf(interface_list, "%s]}", interface_list);
-    fprintf(stderr, "IF list - %s\n", interface_list);
-
     freeifaddrs(ifaddr);
-    // return string("127.0.0.1");
 }
