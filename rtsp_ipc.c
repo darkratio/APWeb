@@ -114,8 +114,7 @@ void get_interfaces_list(char* interface_list)
     char host[NI_MAXHOST];
 
     if (getifaddrs(&ifaddr) == -1) {
-        perror("getifaddrs");
-        exit(EXIT_FAILURE);
+        printf("Could not get IPs");
     }
     interface_list[0] = '\0';
     sprintf(interface_list, "{\"interfaces\": [");
@@ -128,7 +127,7 @@ void get_interfaces_list(char* interface_list)
                     NULL, 0, NI_NUMERICHOST);
         if (ifa->ifa_addr->sa_family==AF_INET) {
             if (i == 0) {
-                sprintf(interface_list, "%s\"%s\"", interface_list, ifa->ifa_name);    
+                sprintf(interface_list, "%s\"%s\"", interface_list, ifa->ifa_name);
             } else {
                 sprintf(interface_list, "%s,\"%s\"", interface_list, ifa->ifa_name);
             }
