@@ -85,23 +85,17 @@
         }
     }
 
-    function CopyToClipboard (containerid) {
-        // Create a new textarea element and give it id='temp_element'
-        console.log("Copying2 " + containerid.innerHTML);
-
-        var textarea = document.createElement('textarea')
-        textarea.id = 'temp_element'
-        // Optional step to make less noise on the page, if any!
+    // Hacky code to copy text from a clipboard
+    function CopyToClipboard(containerid) {
+        console.log("Copying " + containerid.innerHTML);
+        var textarea = document.createElement('textarea');
+        textarea.id = 'temp_element';
         textarea.style.height = 0
-        // Now append it to your page somewhere, I chose <body>
         document.body.appendChild(textarea)
-        // Give our textarea a value of whatever inside the div of id=containerid
         textarea.value = containerid.innerHTML
-        // Now copy whatever inside the textarea to clipboard
         var selector = document.querySelector('#temp_element')
         selector.select()
         document.execCommand('copy')
-        // Remove the textarea
         document.body.removeChild(textarea)
     }
 
