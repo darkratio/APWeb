@@ -11,7 +11,7 @@
 <body>
 
 <p><a href="/index.html"><img src="/images/main_logo.png" alt="ArduPilot"></a></p>
-<h1>Video Streaming</h1>
+<h1>Video Streaming - (for UDP Streaming use Cherrypy instead)</h1>
 <div id="serverStoppedDiv">
 <p>Network Interface: <select id="if_select_box"></select><button type="submit" style="padding:1px" value="set_if" onclick="start_server();">Start RTSP Server</button></p>
 </div>
@@ -21,6 +21,9 @@
 </table>
 <p><input type="submit" name="action" value="Stop RTSP Server" onclick="stop_server();"></p>
 </div>
+<hr>
+<p><a href="/index.html">home</a>
+
 <script>
     var VideoPresetsEnum = {
         VIDEO_320x240x15: 0, VIDEO_640x480x15: 1, VIDEO_1280x720x15: 2,
