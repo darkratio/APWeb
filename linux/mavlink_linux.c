@@ -67,7 +67,7 @@ static void mavlink_periodic(void)
     static long long last_heartbeat;
     
     if (now - last_send_stream > 15) {
-        send_stream_rates_request(4);
+        send_stream_rates_request(10);
         last_send_stream = now;
     }
     if (now - last_heartbeat > 10 || last_heartbeat == 0) {
